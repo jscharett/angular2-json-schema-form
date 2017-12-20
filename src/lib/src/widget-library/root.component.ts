@@ -3,6 +3,8 @@ import { Component, Input, Host } from '@angular/core';
 import { JsonSchemaFormService } from '../json-schema-form.service';
 import { hasValue, JsonPointer } from '../shared';
 
+import { Widget } from './widget';
+
 @Component({
   selector: 'root-widget',
   template: `
@@ -47,17 +49,16 @@ import { hasValue, JsonPointer } from '../shared';
     }
   `],
 })
-export class RootComponent {
-  options: any;
-  @Input() dataIndex: number[];
-  @Input() layoutIndex: number[];
+export class RootComponent extends Widget {
   @Input() layout: any[];
   @Input() isOrderable: boolean;
   @Input() isFlexItem = false;
 
-  constructor(
-    private jsf: JsonSchemaFormService
-  ) { }
+  constructor(jsf: JsonSchemaFormService) {
+    super(jsf);
+  }
+
+  ngOnInit() {}
 
   isDraggable(node: any): boolean {
     return node.arrayItem && node.type !== '$ref' &&

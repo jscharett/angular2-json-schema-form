@@ -1,26 +1,27 @@
 import {
-  Component, ComponentFactoryResolver, ComponentRef, Input,
+  Component, ComponentFactoryResolver, ComponentRef,
   OnChanges, OnInit, ViewChild, ViewContainerRef
 } from '@angular/core';
 
 import { JsonSchemaFormService } from '../json-schema-form.service';
 
+import { Widget } from './widget';
+
 @Component({
   selector: 'template-widget',
   template: `<div #widgetContainer></div>`,
 })
-export class TemplateComponent implements OnInit, OnChanges {
+export class TemplateComponent extends Widget implements OnInit, OnChanges {
   newComponent: ComponentRef<any> = null;
-  @Input() layoutNode: any;
-  @Input() layoutIndex: number[];
-  @Input() dataIndex: number[];
   @ViewChild('widgetContainer', { read: ViewContainerRef })
     widgetContainer: ViewContainerRef;
 
   constructor(
     private componentFactory: ComponentFactoryResolver,
-    private jsf: JsonSchemaFormService
-  ) { }
+    jsf: JsonSchemaFormService
+  ) {
+    super(jsf);
+  }
 
   ngOnInit() {
     this.updateComponent();

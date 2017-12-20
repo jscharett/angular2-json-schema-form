@@ -20,6 +20,7 @@ import { TabComponent } from './tab.component';
 import { TabsComponent } from './tabs.component';
 import { TemplateComponent } from './template.component';
 import { TextareaComponent } from './textarea.component';
+import { Widget } from './widget';
 
 export const BASIC_WIDGETS = [
   AddReferenceComponent, OneOfComponent, ButtonComponent, CheckboxComponent,
@@ -52,3 +53,4 @@ export { TabComponent } from './tab.component';
 export { TabsComponent } from './tabs.component';
 export { TemplateComponent } from './template.component';
 export { TextareaComponent } from './textarea.component';
+export { Widget } from './widget';

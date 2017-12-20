@@ -1,6 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import { JsonSchemaFormService } from '../json-schema-form.service';
+
+import { Widget } from './widget';
 
 @Component({
   selector: 'tabs-widget',
@@ -35,18 +37,14 @@ import { JsonSchemaFormService } from '../json-schema-form.service';
     </div>`,
   styles: [` a { cursor: pointer; } `],
 })
-export class TabsComponent implements OnInit {
-  options: any;
+export class TabsComponent extends Widget implements OnInit {
   itemCount: number;
   selectedItem = 0;
   showAddTab = true;
-  @Input() layoutNode: any;
-  @Input() layoutIndex: number[];
-  @Input() dataIndex: number[];
 
-  constructor(
-    private jsf: JsonSchemaFormService
-  ) { }
+  constructor(jsf: JsonSchemaFormService) {
+    super(jsf);
+  }
 
   ngOnInit() {
     this.options = this.layoutNode.options || {};

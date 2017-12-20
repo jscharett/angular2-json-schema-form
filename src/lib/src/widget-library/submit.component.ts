@@ -1,8 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { AbstractControl } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
 
 import { JsonSchemaFormService } from '../json-schema-form.service';
 import { hasOwn } from '../shared/utility.functions';
+
+import { Widget } from './widget';
 
 @Component({
   selector: 'submit-widget',
@@ -22,24 +23,14 @@ import { hasOwn } from '../shared/utility.functions';
         (click)="updateValue($event)">
     </div>`,
 })
-export class SubmitComponent implements OnInit {
-  formControl: AbstractControl;
-  controlName: string;
-  controlValue: any;
-  controlDisabled = false;
-  boundControl = false;
-  options: any;
-  @Input() layoutNode: any;
-  @Input() layoutIndex: number[];
-  @Input() dataIndex: number[];
+export class SubmitComponent extends Widget implements OnInit {
 
-  constructor(
-    private jsf: JsonSchemaFormService
-  ) { }
+  constructor(jsf: JsonSchemaFormService) {
+    super(jsf);
+  }
 
   ngOnInit() {
-    this.options = this.layoutNode.options || {};
-    this.jsf.initializeControl(this);
+    super.ngOnInit();
     if (hasOwn(this.options, 'disabled')) {
       this.controlDisabled = this.options.disabled;
     } else if (this.jsf.formOptions.disableInvalidSubmit) {
@@ -55,7 +46,7 @@ export class SubmitComponent implements OnInit {
     if (typeof this.options.onClick === 'function') {
       this.options.onClick(event);
     } else {
-      this.jsf.updateValue(this, event.target.value);
+      super.updateValue(event);
     }
   }
 }

@@ -1,7 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { AbstractControl } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
 
 import { JsonSchemaFormService } from '../json-schema-form.service';
+
+import { Widget } from './widget';
 
 @Component({
   selector: 'number-widget',
@@ -47,32 +48,21 @@ import { JsonSchemaFormService } from '../json-schema-form.service';
       <span *ngIf="layoutNode?.type === 'range'" [innerHTML]="controlValue"></span>
     </div>`,
 })
-export class NumberComponent implements OnInit {
-  formControl: AbstractControl;
-  controlName: string;
-  controlValue: any;
-  controlDisabled = false;
-  boundControl = false;
-  options: any;
+export class NumberComponent extends Widget implements OnInit {
   allowNegative = true;
   allowDecimal = true;
   allowExponents = false;
   lastValidNumber = '';
-  @Input() layoutNode: any;
-  @Input() layoutIndex: number[];
-  @Input() dataIndex: number[];
 
-  constructor(
-    private jsf: JsonSchemaFormService
-  ) { }
+  constructor(jsf: JsonSchemaFormService) {
+    super(jsf);
+  }
 
   ngOnInit() {
-    this.options = this.layoutNode.options || {};
-    this.jsf.initializeControl(this);
-    if (this.layoutNode.dataType === 'integer') { this.allowDecimal = false; }
+    super.ngOnInit();
+    if (this.layoutNode.dataType === 'integer') {
+      this.allowDecimal = false;
+    }
   }
 
-  updateValue(event) {
-    this.jsf.updateValue(this, event.target.value);
-  }
 }
