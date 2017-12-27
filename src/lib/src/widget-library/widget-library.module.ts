@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -13,7 +13,13 @@ import { BASIC_WIDGETS } from './index';
   imports:         [ CommonModule, FormsModule, ReactiveFormsModule ],
   declarations:    [ ...BASIC_WIDGETS, OrderableDirective ],
   exports:         [ ...BASIC_WIDGETS, OrderableDirective ],
-  entryComponents: [ ...BASIC_WIDGETS ],
-  providers:       [ JsonSchemaFormService, WidgetLibraryService ]
+  entryComponents: [ ...BASIC_WIDGETS ]
 })
-export class WidgetLibraryModule { }
+export class WidgetLibraryModule {
+  static forRoot(): ModuleWithProviders {
+    return {
+      ngModule: WidgetLibraryModule,
+      providers: [ JsonSchemaFormService, WidgetLibraryService ]
+    }
+  }
+}
