@@ -17,6 +17,7 @@ import {
  * MatSortModule, MatTableModule, MatToolbarModule, MatStepperModule,
  */
 
+import { WidgetLibraryModule } from '../../widget-library/widget-library.module';
 import { JsonSchemaFormService } from '../../json-schema-form.service';
 
 import { MATERIAL_DESIGN_COMPONENTS } from './index';
@@ -27,7 +28,8 @@ import { MATERIAL_DESIGN_COMPONENTS } from './index';
     MatButtonModule, MatButtonToggleModule, MatCardModule, MatCheckboxModule,
     MatDatepickerModule, MatFormFieldModule, MatGridListModule, MatIconModule,
     MatInputModule, MatNativeDateModule, MatRadioModule, MatSelectModule,
-    MatSliderModule, MatSlideToggleModule, MatTabsModule, MatTooltipModule
+    MatSliderModule, MatSlideToggleModule, MatTabsModule, MatTooltipModule,
+    WidgetLibraryModule
   ],
   declarations:    [ ...MATERIAL_DESIGN_COMPONENTS ],
   exports:         [ ...MATERIAL_DESIGN_COMPONENTS ],
