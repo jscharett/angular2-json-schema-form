@@ -10,10 +10,13 @@ import { MaterialDesignFrameworkModule } from './material-design-framework/mater
 
 import { NoFrameworkComponent } from './no-framework.component';
 
+import { WidgetLibraryModule } from '../widget-library/widget-library.module';
+
 @NgModule({
   imports:         [
     CommonModule,
-    Bootstrap3FrameworkModule, MaterialDesignFrameworkModule
+    Bootstrap3FrameworkModule, MaterialDesignFrameworkModule,
+    WidgetLibraryModule
   ],
   declarations:    [ NoFrameworkComponent ],
   exports:         [
