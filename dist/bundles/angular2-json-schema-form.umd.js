@@ -52215,7 +52215,7 @@ var Bootstrap3FrameworkComponent = (function () {
                     this.layoutNode.arrayItem && this.layoutNode.type !== '$ref' ?
                         addClasses(this.options.htmlClass, 'list-group-item') :
                         addClasses(this.options.htmlClass, 'form-group');
-            // this.widgetOptions.htmlClass = '';
+            this.widgetOptions.htmlClass = this.widgetOptions.widgetHtmlClass || '';
             this.options.labelHtmlClass =
                 addClasses(this.options.labelHtmlClass, 'control-label');
             this.widgetOptions.activeClass =
