@@ -52562,7 +52562,7 @@ var Bootstrap3FrameworkModule = (function () {
 }());
 Bootstrap3FrameworkModule.decorators = [
     { type: NgModule, args: [{
-                imports: [CommonModule],
+                imports: [CommonModule, WidgetLibraryModule],
                 declarations: [Bootstrap3FrameworkComponent],
                 exports: [Bootstrap3FrameworkComponent],
                 entryComponents: [Bootstrap3FrameworkComponent]
