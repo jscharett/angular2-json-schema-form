@@ -1,6 +1,6 @@
 {
   "name": "angular2-json-schema-form",
-  "version": "0.5.0-alpha.16",
+  "version": "0.5.1-0",
   "author": {
     "name": "David Schnell-Davis",
     "email": "dschnelldavis@gmail.com"
@@ -36,6 +36,9 @@
     "node": ">= 6.9.0",
     "npm": ">= 3.0.0"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "ng": "ng",
     "serve": "ng serve",
@@ -52,7 +55,9 @@
     "preng-build": "rimraf dist/*",
     "ng-build": "ng build",
     "predeploy": "npm run ng-build",
-    "deploy": "firebase deploy"
+    "deploy": "firebase deploy",
+    "version": "npm run build && git add -f -A dist",
+    "postversion": "git push && git push --tags"
   },
   "dependencies": {
     "ajv": "^5.3.0",
