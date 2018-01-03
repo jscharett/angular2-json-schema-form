@@ -28,7 +28,7 @@ import { WidgetLibraryModule } from '../widget-library/widget-library.module';
 export class FrameworkLibraryModule {
   static forRoot(): ModuleWithProviders {
     return {
-      ngModule: MaterialDesignFrameworkModule,
+      ngModule: FrameworkLibraryModule,
       providers: [ WidgetLibraryService, FrameworkLibraryService ]
     };
   }
