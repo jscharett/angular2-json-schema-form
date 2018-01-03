@@ -1,6 +1,6 @@
 {
   "name": "angular2-json-schema-form",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "author": {
     "name": "David Schnell-Davis",
     "email": "dschnelldavis@gmail.com"
@@ -56,7 +56,7 @@
     "ng-build": "ng build",
     "predeploy": "npm run ng-build",
     "deploy": "firebase deploy",
-    "version": "npm run build && git add -f -A dist",
+    "version": "npm run build && git add -A dist",
     "postversion": "git push && git push --tags"
   },
   "dependencies": {
