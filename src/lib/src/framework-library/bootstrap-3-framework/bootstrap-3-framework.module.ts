@@ -4,9 +4,10 @@ import { CommonModule } from '@angular/common';
 import { JsonSchemaFormService } from '../../json-schema-form.service';
 
 import { Bootstrap3FrameworkComponent } from './bootstrap-3-framework.component';
+import { WidgetLibraryModule } from '../../widget-library/widget-library.module';
 
 @NgModule({
-  imports:         [ CommonModule ],
+  imports:         [ CommonModule, WidgetLibraryModule ],
   declarations:    [ Bootstrap3FrameworkComponent ],
   exports:         [ Bootstrap3FrameworkComponent ],
   entryComponents: [ Bootstrap3FrameworkComponent ]
