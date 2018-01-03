@@ -2,7 +2,9 @@
 
 # compiled output
 /compiled
-#/dist
+/dist/package.json
+/dist/*.md
+/dist/LICENSE
 /docs/api
 /out-ngc
 /tmp
