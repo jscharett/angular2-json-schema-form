@@ -52794,7 +52794,8 @@ MaterialDesignFrameworkModule.decorators = [
                     MatButtonModule, MatButtonToggleModule, MatCardModule, MatCheckboxModule,
                     MatDatepickerModule, MatFormFieldModule, MatGridListModule, MatIconModule,
                     MatInputModule, MatNativeDateModule, MatRadioModule, MatSelectModule,
-                    MatSliderModule, MatSlideToggleModule, MatTabsModule, MatTooltipModule
+                    MatSliderModule, MatSlideToggleModule, MatTabsModule, MatTooltipModule,
+                    WidgetLibraryModule
                 ],
                 declarations: [...MATERIAL_DESIGN_COMPONENTS],
                 exports: [...MATERIAL_DESIGN_COMPONENTS],
