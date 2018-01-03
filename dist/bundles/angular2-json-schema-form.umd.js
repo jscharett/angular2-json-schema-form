@@ -52126,6 +52126,7 @@ var __assign$10 = (undefined && undefined.__assign) || Object.assign || function
 };
 /**
  * Bootstrap 3 framework for Angular JSON Schema Form.
+ *
  */
 var Bootstrap3FrameworkComponent = (function () {
     /**
@@ -52214,7 +52215,7 @@ var Bootstrap3FrameworkComponent = (function () {
                     this.layoutNode.arrayItem && this.layoutNode.type !== '$ref' ?
                         addClasses(this.options.htmlClass, 'list-group-item') :
                         addClasses(this.options.htmlClass, 'form-group');
-            this.widgetOptions.htmlClass = '';
+            // this.widgetOptions.htmlClass = '';
             this.options.labelHtmlClass =
                 addClasses(this.options.labelHtmlClass, 'control-label');
             this.widgetOptions.activeClass =
