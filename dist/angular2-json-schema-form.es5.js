@@ -52581,7 +52581,7 @@ var FrameworkLibraryModule = (function () {
      */
     FrameworkLibraryModule.forRoot = function () {
         return {
-            ngModule: MaterialDesignFrameworkModule,
+            ngModule: FrameworkLibraryModule,
             providers: [WidgetLibraryService, FrameworkLibraryService]
         };
     };
@@ -52591,7 +52591,8 @@ FrameworkLibraryModule.decorators = [
     { type: NgModule, args: [{
                 imports: [
                     CommonModule,
-                    Bootstrap3FrameworkModule, MaterialDesignFrameworkModule
+                    Bootstrap3FrameworkModule, MaterialDesignFrameworkModule,
+                    WidgetLibraryModule
                 ],
                 declarations: [NoFrameworkComponent],
                 exports: [
