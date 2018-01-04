@@ -406,7 +406,6 @@ var Subscriber = (function (_super) {
                 }
                 if (typeof destinationOrNext === 'object') {
                     if (destinationOrNext instanceof Subscriber) {
-                        this.syncErrorThrowable = destinationOrNext.syncErrorThrowable;
                         this.destination = destinationOrNext;
                         this.destination.add(this);
                     }
@@ -883,7 +882,7 @@ var Observable = (function () {
             operator.call(sink, this.source);
         }
         else {
-            sink.add(this.source || !sink.syncErrorThrowable ? this._subscribe(sink) : this._trySubscribe(sink));
+            sink.add(this.source ? this._subscribe(sink) : this._trySubscribe(sink));
         }
         if (sink.syncErrorThrowable) {
             sink.syncErrorThrowable = false;
@@ -6847,9 +6846,9 @@ function buildLayout(jsf, widgetLibrary) {
             var /** @type {?} */ LastKey = JsonPointer.toKey(newNode.dataPointer);
             if (!newNode.name && isString(LastKey) && LastKey !== '-') {
                 newNode.name = LastKey;
-                if (!newNode.options.title && !/^\d+$/.test(newNode.name)) {
-                    newNode.options.title = fixTitle(newNode.name);
-                }
+                // if (!newNode.options.title && !/^\d+$/.test(newNode.name)) {
+                //   newNode.options.title = fixTitle(newNode.name);
+                // }
             }
             var /** @type {?} */ shortDataPointer = removeRecursiveReferences(newNode.dataPointer, jsf.dataRecursiveRefMap, jsf.arrayMap);
             var /** @type {?} */ recursive_1 = !shortDataPointer.length ||
@@ -6929,6 +6928,9 @@ function buildLayout(jsf, widgetLibrary) {
             else {
                 // TODO: create item in FormGroup model from layout key (?)
                 updateInputOptions(newNode, {}, jsf);
+            }
+            if (!newNode.options.title && !/^\d+$/.test(newNode.name)) {
+                newNode.options.title = fixTitle(newNode.name);
             }
             if (hasOwn(newNode.options, 'copyValueTo')) {
                 if (typeof newNode.options.copyValueTo === 'string') {
@@ -8829,7 +8831,7 @@ var JsonSchemaFormService = (function () {
         if (name) {
             newLayoutNode.name = name;
             newLayoutNode.dataPointer += '/' + JsonPointer.escape(name);
-            newLayoutNode.options.title = fixTitle(name);
+            newLayoutNode.options.title = newLayoutNode.options.title || fixTitle(name);
         }
         // Add the new layoutNode to the form layout
         JsonPointer.insert(this.layout, this.getLayoutPointer(ctx), newLayoutNode);
@@ -24192,6 +24194,15 @@ var fromEvent_1 = FromEventObservable_1.FromEventObservable.create;
 
 
 /* tslint:enable:max-line-length */
+function merge$3() {
+    var observables = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        observables[_i - 0] = arguments[_i];
+    }
+    return function (source) { return source.lift.call(mergeStatic$1.apply(void 0, [source].concat(observables))); };
+}
+var merge_2$2 = merge$3;
+/* tslint:enable:max-line-length */
 /**
  * Creates an output Observable which concurrently emits all values from every
  * given input Observable.
@@ -24252,7 +24263,7 @@ var fromEvent_1 = FromEventObservable_1.FromEventObservable.create;
  * @name merge
  * @owner Observable
  */
-function merge() {
+function mergeStatic$1() {
     var observables = [];
     for (var _i = 0; _i < arguments.length; _i++) {
         observables[_i - 0] = arguments[_i];
@@ -24274,7 +24285,83 @@ function merge() {
     }
     return mergeAll_1.mergeAll(concurrent)(new ArrayObservable_1.ArrayObservable(observables, scheduler));
 }
-var merge_2 = merge;
+var mergeStatic_1 = mergeStatic$1;
+
+
+var merge_1 = {
+	merge: merge_2$2,
+	mergeStatic: mergeStatic_1
+};
+
+"use strict";
+
+var merge_2$1 = merge_1;
+var mergeStatic = merge_2$1.mergeStatic;
+/* tslint:enable:max-line-length */
+/**
+ * Creates an output Observable which concurrently emits all values from every
+ * given input Observable.
+ *
+ * <span class="informal">Flattens multiple Observables together by blending
+ * their values into one Observable.</span>
+ *
+ * <img src="./img/merge.png" width="100%">
+ *
+ * `merge` subscribes to each given input Observable (either the source or an
+ * Observable given as argument), and simply forwards (without doing any
+ * transformation) all the values from all the input Observables to the output
+ * Observable. The output Observable only completes once all input Observables
+ * have completed. Any error delivered by an input Observable will be immediately
+ * emitted on the output Observable.
+ *
+ * @example <caption>Merge together two Observables: 1s interval and clicks</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var timer = Rx.Observable.interval(1000);
+ * var clicksOrTimer = clicks.merge(timer);
+ * clicksOrTimer.subscribe(x => console.log(x));
+ *
+ * @example <caption>Merge together 3 Observables, but only 2 run concurrently</caption>
+ * var timer1 = Rx.Observable.interval(1000).take(10);
+ * var timer2 = Rx.Observable.interval(2000).take(6);
+ * var timer3 = Rx.Observable.interval(500).take(10);
+ * var concurrent = 2; // the argument
+ * var merged = timer1.merge(timer2, timer3, concurrent);
+ * merged.subscribe(x => console.log(x));
+ *
+ * @see {@link mergeAll}
+ * @see {@link mergeMap}
+ * @see {@link mergeMapTo}
+ * @see {@link mergeScan}
+ *
+ * @param {ObservableInput} other An input Observable to merge with the source
+ * Observable. More than one input Observables may be given as argument.
+ * @param {number} [concurrent=Number.POSITIVE_INFINITY] Maximum number of input
+ * Observables being subscribed to concurrently.
+ * @param {Scheduler} [scheduler=null] The IScheduler to use for managing
+ * concurrency of input Observables.
+ * @return {Observable} An Observable that emits items that are the result of
+ * every input Observable.
+ * @method merge
+ * @owner Observable
+ */
+function merge$2() {
+    var observables = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        observables[_i - 0] = arguments[_i];
+    }
+    return merge_1.merge.apply(void 0, observables)(this);
+}
+var merge_4 = merge$2;
+
+
+var merge_3 = {
+	mergeStatic: mergeStatic,
+	merge: merge_4
+};
+
+"use strict";
+
+var merge_2 = merge_3.mergeStatic;
 
 /**
  * @license
@@ -52130,7 +52217,6 @@ var __assign$10 = (undefined && undefined.__assign) || Object.assign || function
 };
 /**
  * Bootstrap 3 framework for Angular JSON Schema Form.
- *
  */
 var Bootstrap3FrameworkComponent = (function () {
     /**
