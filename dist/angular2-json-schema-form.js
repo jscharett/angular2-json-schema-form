@@ -8504,7 +8504,7 @@ class JsonSchemaFormService {
         if (name) {
             newLayoutNode.name = name;
             newLayoutNode.dataPointer += '/' + JsonPointer.escape(name);
-            newLayoutNode.options.title = newLayoutNode.options.title || fixTitle(name);
+            newLayoutNode.options.title = fixTitle(name);
         }
         // Add the new layoutNode to the form layout
         JsonPointer.insert(this.layout, this.getLayoutPointer(ctx), newLayoutNode);
