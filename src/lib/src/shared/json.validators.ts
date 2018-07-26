@@ -52,7 +52,6 @@ import { jsonSchemaFormatTests, JsonSchemaFormatNames } from './format-regex.con
  * (Validators originally included with Angular are maked with (*).)
  *
  * NOTE / TODO: The dependencies validator is not complete.
- * NOTE / TODO: The contains validator is not complete.
  *
  * Validators not used by JSON Schema (but included for compatibility)
  * and their JSON Schema equivalents:
@@ -640,22 +639,19 @@ export class JsonValidators {
   /**
    * 'contains' validator
    *
-   * TODO: Complete this validator
+   * Requires a form array to contain a value.
    *
-   * Requires values in a form array to be unique.
-   *
-   * @param {boolean = true} unique? - true to validate, false to disable
+   * @param {any} requiredItem - item required to be in array
    * @return {IValidatorFn}
    */
-  static contains(requiredItem = true): IValidatorFn {
+  static contains(requiredItem: any): IValidatorFn {
     if (!requiredItem) { return JsonValidators.nullValidator; }
     return (control: AbstractControl, invert = false): ValidationErrors|null => {
       if (isEmpty(control.value) || !isArray(control.value)) { return null; }
       const currentItems = control.value;
-      // const isValid = currentItems.some(item =>
-      //
-      // );
-      const isValid = true;
+      const expectedItem = JSON.stringify(requiredItem);
+      const isValid = currentItems.some(item => JSON.stringify(item) === expectedItem);
+
       return xor(isValid, invert) ?
         null : { 'contains': { requiredItem, currentItems } };
     };

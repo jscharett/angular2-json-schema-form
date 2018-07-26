@@ -107,8 +107,72 @@ describe('pattern', () => {});
         });
     });
 
-    describe('minProperties', () => {});
-    describe('maxProperties', () => {});
+    describe('minProperties', () => {
+        describe('valid', () => {
+            it('should be valid when numProperties >= minProperties', () => {
+                controlValue = {a: 1, b: 2, c: 3};
+                expect(JsonValidators.minProperties(2)(control)).toBeNull();
+            });
+            it('should be valid when numProperties < minProperties and inverted', () => {
+                controlValue = {a: 1, b: 2, c: 3};
+                expect(JsonValidators.minProperties(4)(control, true)).toBeNull();
+            });
+        });
+        describe('invalid', () => {
+            it('should be invalid when numProperties < minProperties', () => {
+                controlValue = {a: 1, b: 2, c: 3};
+                expect(JsonValidators.minProperties(4)(control)).toEqual({
+                    minProperties: {
+                        minimumProperties: 4,
+                        currentProperties: 3
+                    }
+                });
+            });
+            it('should be invalid when numProperties >= minProperties and inverted', () => {
+                controlValue = {a: 1, b: 2, c: 3};
+                expect(JsonValidators.minProperties(2)(control, true)).toEqual({
+                    minProperties: {
+                        minimumProperties: 2,
+                        currentProperties: 3
+                    }
+                });
+            });
+        });
+    });
+
+    describe('maxProperties', () => {
+        describe('valid', () => {
+            it('should be valid when numProperties <= maxProperties', () => {
+                controlValue = {a: 1, b: 2, c: 3};
+                expect(JsonValidators.maxProperties(4)(control)).toBeNull();
+            });
+            it('should be valid when numProperties > maxProperties and inverted', () => {
+                controlValue = {a: 1, b: 2, c: 3};
+                expect(JsonValidators.maxProperties(2)(control, true)).toBeNull();
+            });
+        });
+        describe('invalid', () => {
+            it('should be invalid when numProperties > maxProperties', () => {
+                controlValue = {a: 1, b: 2, c: 3};
+                expect(JsonValidators.maxProperties(2)(control)).toEqual({
+                    maxProperties: {
+                        maximumProperties: 2,
+                        currentProperties: 3
+                    }
+                });
+            });
+            it('should be invalid when numProperties <= maxProperties and inverted', () => {
+                controlValue = {a: 1, b: 2, c: 3};
+                expect(JsonValidators.maxProperties(4)(control, true)).toEqual({
+                    maxProperties: {
+                        maximumProperties: 2,
+                        currentProperties: 3
+                    }
+                });
+            });
+        });
+    });
+
     describe('dependencies', () => {});
 
     describe('minItems', () => {
@@ -238,7 +302,39 @@ describe('pattern', () => {});
         });
     });
 
-    describe('contains', () => {});
+    describe('contains', () => {
+        describe('valid', () => {
+            it('should be valid when array contains value', () => {
+                controlValue = [3, 5];
+                expect(JsonValidators.contains(3)(control)).toBeNull();
+            });
+            it('should be valid when inverted and array does not contain value', () => {
+                controlValue = [3, 5];
+                expect(JsonValidators.contains(4)(control, true)).toBeNull();
+            });
+        });
+        describe('invalid', () => {
+            it('should be invalid when array does not contain value', () => {
+                controlValue = [3, 5];
+                expect(JsonValidators.contains(4)(control)).toEqual({
+                    contains: {
+                        requiredItem: 4,
+                        currentItems: [3, 5]
+                    }
+                });
+            });
+            it('should be invalid when inverted and array contains value', () => {
+                controlValue = [3, 5];
+                expect(JsonValidators.contains(5)(control, true)).toEqual({
+                    contains: {
+                        requiredItem: 5,
+                        currentItems: [3, 5]
+                    }
+                });
+            });
+        });
+    });
+
 describe('nullValidator', () => {});
     describe('composeAnyOf', () => {});
     describe('composeOneOf', () => {});
