@@ -1,0 +1,8 @@
+{
+    "$schema": "./node_modules/ng-packagr/ng-package.schema.json",
+    "lib": {
+        "entryFile": "index.ts",
+        "languageLevel": [ "es2016", "dom" ]
+    },
+    "dest": "../../dist/angular2-json-schema-form"
+}
