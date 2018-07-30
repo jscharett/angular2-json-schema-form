@@ -72,7 +72,7 @@ export declare class JsonSchemaFormService {
     initializeControl(ctx: any, bind?: boolean): boolean;
     formatErrors(errors: any, validationMessages?: any): string;
     updateValue(ctx: any, value: any): void;
-    updateArrayCheckboxList(ctx: any, checkboxList: TitleMapItem[]): void;
+    protected updateArray(ctx: any, items: any[]): void;
     getFormControl(ctx: any): AbstractControl;
     getFormControlValue(ctx: any): AbstractControl;
     getFormControlGroup(ctx: any): FormArray | FormGroup;

@@ -2916,15 +2916,14 @@ class JsonValidators {
                 return null;
             }
             const currentValue = control.value;
-            const isEqual = (enumValue, inputValue) => enumValue === inputValue ||
-                (isNumber(enumValue) && +inputValue === +enumValue) ||
-                (isBoolean(enumValue, 'strict') &&
-                    toJavaScriptType(inputValue, 'boolean') === enumValue) ||
-                (enumValue === null && !hasValue(inputValue)) ||
-                isEqual(enumValue, inputValue);
-            const isValid = isArray$2(currentValue) ?
-                currentValue.every(inputValue => allowedValues.some(enumValue => isEqual(enumValue, inputValue))) :
-                allowedValues.some(enumValue => isEqual(enumValue, currentValue));
+            const areEqual = (enumValue, inputValue) => enumValue === inputValue
+                || (isNumber(enumValue) && +inputValue === +enumValue)
+                || (isBoolean(enumValue, 'strict') && toJavaScriptType(inputValue, 'boolean') === enumValue)
+                || (enumValue === null && !hasValue(inputValue))
+                || isEqual(enumValue, inputValue);
+            const isValid = isArray$2(currentValue)
+                ? currentValue.every(inputValue => allowedValues.some(enumValue => areEqual(enumValue, inputValue)))
+                : allowedValues.some(enumValue => areEqual(enumValue, currentValue));
             return xor(isValid, invert) ?
                 null : { 'enum': { allowedValues, currentValue } };
         };
@@ -3951,6 +3950,10 @@ function updateInputOptions(layoutNode, schema, jsf) {
                 }
             }
         }
+    }
+    if (hasOwn(newOptions, 'readOnly')) {
+        newOptions.readonly = newOptions.readOnly;
+        delete newOptions.readOnly;
     }
     if (schema.type === 'integer' && !hasValue(newOptions.multipleOf)) {
         newOptions.multipleOf = 1;
@@ -6458,8 +6461,13 @@ class JsonSchemaFormService {
     updateValue(ctx, value) {
         ctx.controlValue = value;
         if (ctx.boundControl) {
-            ctx.formControl.setValue(value);
-            ctx.formControl.markAsDirty();
+            if (isArray$2(value)) {
+                this.updateArray(ctx, value);
+            }
+            else {
+                ctx.formControl.setValue(value);
+                ctx.formControl.markAsDirty();
+            }
         }
         ctx.layoutNode.value = value;
         if (isArray$2(ctx.options.copyValueTo)) {
@@ -6472,18 +6480,16 @@ class JsonSchemaFormService {
             }
         }
     }
-    updateArrayCheckboxList(ctx, checkboxList) {
+    updateArray(ctx, items) {
         const formArray = this.getFormControl(ctx);
         while (formArray.value.length) {
             formArray.removeAt(0);
         }
         const refPointer = removeRecursiveReferences(ctx.layoutNode.dataPointer + '/-', this.dataRecursiveRefMap, this.arrayMap);
-        for (const checkboxItem of checkboxList) {
-            if (checkboxItem.checked) {
-                const newFormControl = buildFormGroup(this.templateRefLibrary[refPointer]);
-                newFormControl.setValue(checkboxItem.value);
-                formArray.push(newFormControl);
-            }
+        for (const item of items) {
+            const newFormControl = buildFormGroup(this.templateRefLibrary[refPointer]);
+            newFormControl.setValue(item);
+            formArray.push(newFormControl);
         }
         formArray.markAsDirty();
     }
@@ -6889,7 +6895,9 @@ class CheckboxesComponent extends Widget {
             }
         }
         if (this.boundControl) {
-            this.jsf.updateArrayCheckboxList(this, this.checkboxList);
+            this.jsf.updateValue(this, this.checkboxList
+                .filter(checkboxItem => checkboxItem.checked)
+                .map(checkboxItem => checkboxItem.value));
         }
     }
 }
@@ -9175,7 +9183,9 @@ class MaterialCheckboxesComponent {
     updateValue() {
         this.options.showErrors = true;
         if (this.boundControl) {
-            this.jsf.updateArrayCheckboxList(this, this.checkboxList);
+            this.jsf.updateValue(this, this.checkboxList
+                .filter(checkboxItem => checkboxItem.checked)
+                .map(checkboxItem => checkboxItem.value));
         }
     }
     updateAllValues(event) {

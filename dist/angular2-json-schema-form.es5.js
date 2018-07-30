@@ -3022,21 +3022,20 @@ var JsonValidators = (function () {
                 return null;
             }
             var currentValue = control.value;
-            var isEqual = function (enumValue, inputValue) {
-                return enumValue === inputValue ||
-                    (isNumber(enumValue) && +inputValue === +enumValue) ||
-                    (isBoolean(enumValue, 'strict') &&
-                        toJavaScriptType(inputValue, 'boolean') === enumValue) ||
-                    (enumValue === null && !hasValue(inputValue)) ||
-                    isEqual(enumValue, inputValue);
+            var areEqual = function (enumValue, inputValue) {
+                return enumValue === inputValue
+                    || (isNumber(enumValue) && +inputValue === +enumValue)
+                    || (isBoolean(enumValue, 'strict') && toJavaScriptType(inputValue, 'boolean') === enumValue)
+                    || (enumValue === null && !hasValue(inputValue))
+                    || isEqual(enumValue, inputValue);
             };
-            var isValid = isArray$2(currentValue) ?
-                currentValue.every(function (inputValue) {
+            var isValid = isArray$2(currentValue)
+                ? currentValue.every(function (inputValue) {
                     return allowedValues.some(function (enumValue) {
-                        return isEqual(enumValue, inputValue);
+                        return areEqual(enumValue, inputValue);
                     });
-                }) :
-                allowedValues.some(function (enumValue) { return isEqual(enumValue, currentValue); });
+                })
+                : allowedValues.some(function (enumValue) { return areEqual(enumValue, currentValue); });
             return xor(isValid, invert) ?
                 null : { 'enum': { allowedValues: allowedValues, currentValue: currentValue } };
         };
@@ -4141,6 +4140,10 @@ function updateInputOptions(layoutNode, schema, jsf) {
                 }
             }
         }
+    }
+    if (hasOwn(newOptions, 'readOnly')) {
+        newOptions.readonly = newOptions.readOnly;
+        delete newOptions.readOnly;
     }
     if (schema.type === 'integer' && !hasValue(newOptions.multipleOf)) {
         newOptions.multipleOf = 1;
@@ -6804,8 +6807,13 @@ var JsonSchemaFormService = (function () {
     JsonSchemaFormService.prototype.updateValue = function (ctx, value) {
         ctx.controlValue = value;
         if (ctx.boundControl) {
-            ctx.formControl.setValue(value);
-            ctx.formControl.markAsDirty();
+            if (isArray$2(value)) {
+                this.updateArray(ctx, value);
+            }
+            else {
+                ctx.formControl.setValue(value);
+                ctx.formControl.markAsDirty();
+            }
         }
         ctx.layoutNode.value = value;
         if (isArray$2(ctx.options.copyValueTo)) {
@@ -6819,19 +6827,17 @@ var JsonSchemaFormService = (function () {
             }
         }
     };
-    JsonSchemaFormService.prototype.updateArrayCheckboxList = function (ctx, checkboxList) {
+    JsonSchemaFormService.prototype.updateArray = function (ctx, items) {
         var formArray = this.getFormControl(ctx);
         while (formArray.value.length) {
             formArray.removeAt(0);
         }
         var refPointer = removeRecursiveReferences(ctx.layoutNode.dataPointer + '/-', this.dataRecursiveRefMap, this.arrayMap);
-        for (var _i = 0, checkboxList_1 = checkboxList; _i < checkboxList_1.length; _i++) {
-            var checkboxItem = checkboxList_1[_i];
-            if (checkboxItem.checked) {
-                var newFormControl = buildFormGroup(this.templateRefLibrary[refPointer]);
-                newFormControl.setValue(checkboxItem.value);
-                formArray.push(newFormControl);
-            }
+        for (var _i = 0, items_1 = items; _i < items_1.length; _i++) {
+            var item = items_1[_i];
+            var newFormControl = buildFormGroup(this.templateRefLibrary[refPointer]);
+            newFormControl.setValue(item);
+            formArray.push(newFormControl);
         }
         formArray.markAsDirty();
     };
@@ -7264,7 +7270,9 @@ var CheckboxesComponent = (function (_super) {
             }
         }
         if (this.boundControl) {
-            this.jsf.updateArrayCheckboxList(this, this.checkboxList);
+            this.jsf.updateValue(this, this.checkboxList
+                .filter(function (checkboxItem) { return checkboxItem.checked; })
+                .map(function (checkboxItem) { return checkboxItem.value; }));
         }
     };
     CheckboxesComponent.decorators = [
@@ -9144,7 +9152,9 @@ var MaterialCheckboxesComponent = (function () {
     MaterialCheckboxesComponent.prototype.updateValue = function () {
         this.options.showErrors = true;
         if (this.boundControl) {
-            this.jsf.updateArrayCheckboxList(this, this.checkboxList);
+            this.jsf.updateValue(this, this.checkboxList
+                .filter(function (checkboxItem) { return checkboxItem.checked; })
+                .map(function (checkboxItem) { return checkboxItem.value; }));
         }
     };
     MaterialCheckboxesComponent.prototype.updateAllValues = function (event) {
