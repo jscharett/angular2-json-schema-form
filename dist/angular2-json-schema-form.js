@@ -3912,7 +3912,7 @@ function updateInputOptions(layoutNode, schema, jsf) {
     }
     let newOptions = {};
     const fixUiKeys = key => key.slice(0, 3).toLowerCase() === 'ui:' ? key.slice(3) : key;
-    mergeFilteredObject(newOptions, jsf.formOptions.defautWidgetOptions, [], fixUiKeys);
+    mergeFilteredObject(newOptions, jsf.formOptions.defaultWidgetOptions, [], fixUiKeys);
     [[JsonPointer.get(schema, '/ui:widget/options'), []],
         [JsonPointer.get(schema, '/ui:widget'), []],
         [schema, [
@@ -4944,11 +4944,6 @@ function buildLayout(jsf, widgetLibrary) {
                         newNode.options.listItems =
                             newNode.options.maxItems - newNode.options.tupleItems;
                     }
-                    else if (newNode.options.minItems >
-                        newNode.options.tupleItems + newNode.options.listItems) {
-                        newNode.options.listItems =
-                            newNode.options.minItems - newNode.options.tupleItems;
-                    }
                     if (!nodeDataMap.has('maxItems')) {
                         nodeDataMap.set('maxItems', newNode.options.maxItems);
                         nodeDataMap.set('minItems', newNode.options.minItems);
@@ -5158,7 +5153,7 @@ function buildLayout(jsf, widgetLibrary) {
             dataType: 'object',
             items: fullLayout,
             name: '',
-            options: cloneDeep(jsf.formOptions.defautWidgetOptions),
+            options: cloneDeep(jsf.formOptions.defaultWidgetOptions),
             recursiveReference: true,
             required: false,
             type: 'section',
@@ -5268,7 +5263,7 @@ function buildLayoutFromSchema(jsf, widgetLibrary, nodeValue = null, schemaPoint
             newNode.options.minItems = 1;
         }
         if (!hasOwn(newNode.options, 'listItems')) {
-            newNode.options.listItems = 1;
+            newNode.options.listItems = jsf.formOptions.defaultWidgetOptions.listItems;
         }
         newNode.options.tupleItems = isArray$2(schema.items) ? schema.items.length : 0;
         if (newNode.options.maxItems <= newNode.options.tupleItems) {
@@ -5278,10 +5273,6 @@ function buildLayoutFromSchema(jsf, widgetLibrary, nodeValue = null, schemaPoint
         else if (newNode.options.maxItems <
             newNode.options.tupleItems + newNode.options.listItems) {
             newNode.options.listItems = newNode.options.maxItems - newNode.options.tupleItems;
-        }
-        else if (newNode.options.minItems >
-            newNode.options.tupleItems + newNode.options.listItems) {
-            newNode.options.listItems = newNode.options.minItems - newNode.options.tupleItems;
         }
         if (!nodeDataMap.has('maxItems')) {
             nodeDataMap.set('maxItems', newNode.options.maxItems);
@@ -6136,8 +6127,8 @@ class JsonSchemaFormService {
             setLayoutDefaults: 'auto',
             validateOnRender: 'auto',
             widgets: {},
-            defautWidgetOptions: {
-                listItems: 1,
+            defaultWidgetOptions: {
+                listItems: 0,
                 addable: true,
                 orderable: true,
                 removable: true,
@@ -6158,7 +6149,7 @@ class JsonSchemaFormService {
         this.language = language;
         const validationMessages = language.slice(0, 2) === 'fr' ?
             frValidationMessages : enValidationMessages;
-        this.defaultFormOptions.defautWidgetOptions.validationMessages =
+        this.defaultFormOptions.defaultWidgetOptions.validationMessages =
             cloneDeep(validationMessages);
     }
     getData() { return this.data; }
@@ -6244,15 +6235,15 @@ class JsonSchemaFormService {
         if (isObject$1(newOptions)) {
             const addOptions = cloneDeep(newOptions);
             if (isObject$1(addOptions.defaultOptions)) {
-                Object.assign(this.formOptions.defautWidgetOptions, addOptions.defaultOptions);
+                Object.assign(this.formOptions.defaultWidgetOptions, addOptions.defaultOptions);
                 delete addOptions.defaultOptions;
             }
-            if (isObject$1(addOptions.defautWidgetOptions)) {
-                Object.assign(this.formOptions.defautWidgetOptions, addOptions.defautWidgetOptions);
-                delete addOptions.defautWidgetOptions;
+            if (isObject$1(addOptions.defaultWidgetOptions)) {
+                Object.assign(this.formOptions.defaultWidgetOptions, addOptions.defaultWidgetOptions);
+                delete addOptions.defaultWidgetOptions;
             }
             Object.assign(this.formOptions, addOptions);
-            const globalDefaults = this.formOptions.defautWidgetOptions;
+            const globalDefaults = this.formOptions.defaultWidgetOptions;
             ['ErrorState', 'SuccessState']
                 .filter(suffix => hasOwn(globalDefaults, 'disable' + suffix))
                 .forEach(suffix => {

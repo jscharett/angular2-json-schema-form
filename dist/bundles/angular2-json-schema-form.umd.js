@@ -4093,7 +4093,7 @@ function updateInputOptions(layoutNode, schema, jsf) {
     }
     var newOptions = {};
     var fixUiKeys = function (key) { return key.slice(0, 3).toLowerCase() === 'ui:' ? key.slice(3) : key; };
-    mergeFilteredObject(newOptions, jsf.formOptions.defautWidgetOptions, [], fixUiKeys);
+    mergeFilteredObject(newOptions, jsf.formOptions.defaultWidgetOptions, [], fixUiKeys);
     [[JsonPointer.get(schema, '/ui:widget/options'), []],
         [JsonPointer.get(schema, '/ui:widget'), []],
         [schema, [
@@ -5214,11 +5214,6 @@ function buildLayout(jsf, widgetLibrary) {
                         newNode.options.listItems =
                             newNode.options.maxItems - newNode.options.tupleItems;
                     }
-                    else if (newNode.options.minItems >
-                        newNode.options.tupleItems + newNode.options.listItems) {
-                        newNode.options.listItems =
-                            newNode.options.minItems - newNode.options.tupleItems;
-                    }
                     if (!nodeDataMap.has('maxItems')) {
                         nodeDataMap.set('maxItems', newNode.options.maxItems);
                         nodeDataMap.set('minItems', newNode.options.minItems);
@@ -5430,7 +5425,7 @@ function buildLayout(jsf, widgetLibrary) {
             dataType: 'object',
             items: fullLayout,
             name: '',
-            options: _.cloneDeep(jsf.formOptions.defautWidgetOptions),
+            options: _.cloneDeep(jsf.formOptions.defaultWidgetOptions),
             recursiveReference: true,
             required: false,
             type: 'section',
@@ -5550,7 +5545,7 @@ function buildLayoutFromSchema(jsf, widgetLibrary, nodeValue, schemaPointer, dat
             newNode.options.minItems = 1;
         }
         if (!hasOwn(newNode.options, 'listItems')) {
-            newNode.options.listItems = 1;
+            newNode.options.listItems = jsf.formOptions.defaultWidgetOptions.listItems;
         }
         newNode.options.tupleItems = isArray$2(schema.items) ? schema.items.length : 0;
         if (newNode.options.maxItems <= newNode.options.tupleItems) {
@@ -5560,10 +5555,6 @@ function buildLayoutFromSchema(jsf, widgetLibrary, nodeValue, schemaPointer, dat
         else if (newNode.options.maxItems <
             newNode.options.tupleItems + newNode.options.listItems) {
             newNode.options.listItems = newNode.options.maxItems - newNode.options.tupleItems;
-        }
-        else if (newNode.options.minItems >
-            newNode.options.tupleItems + newNode.options.listItems) {
-            newNode.options.listItems = newNode.options.minItems - newNode.options.tupleItems;
         }
         if (!nodeDataMap.has('maxItems')) {
             nodeDataMap.set('maxItems', newNode.options.maxItems);
@@ -6428,8 +6419,8 @@ var JsonSchemaFormService = (function () {
             setLayoutDefaults: 'auto',
             validateOnRender: 'auto',
             widgets: {},
-            defautWidgetOptions: {
-                listItems: 1,
+            defaultWidgetOptions: {
+                listItems: 0,
                 addable: true,
                 orderable: true,
                 removable: true,
@@ -6451,7 +6442,7 @@ var JsonSchemaFormService = (function () {
         this.language = language;
         var validationMessages = language.slice(0, 2) === 'fr' ?
             frValidationMessages : enValidationMessages;
-        this.defaultFormOptions.defautWidgetOptions.validationMessages =
+        this.defaultFormOptions.defaultWidgetOptions.validationMessages =
             _.cloneDeep(validationMessages);
     };
     JsonSchemaFormService.prototype.getData = function () { return this.data; };
@@ -6543,15 +6534,15 @@ var JsonSchemaFormService = (function () {
         if (isObject$1(newOptions)) {
             var addOptions = _.cloneDeep(newOptions);
             if (isObject$1(addOptions.defaultOptions)) {
-                Object.assign(this.formOptions.defautWidgetOptions, addOptions.defaultOptions);
+                Object.assign(this.formOptions.defaultWidgetOptions, addOptions.defaultOptions);
                 delete addOptions.defaultOptions;
             }
-            if (isObject$1(addOptions.defautWidgetOptions)) {
-                Object.assign(this.formOptions.defautWidgetOptions, addOptions.defautWidgetOptions);
-                delete addOptions.defautWidgetOptions;
+            if (isObject$1(addOptions.defaultWidgetOptions)) {
+                Object.assign(this.formOptions.defaultWidgetOptions, addOptions.defaultWidgetOptions);
+                delete addOptions.defaultWidgetOptions;
             }
             Object.assign(this.formOptions, addOptions);
-            var globalDefaults_1 = this.formOptions.defautWidgetOptions;
+            var globalDefaults_1 = this.formOptions.defaultWidgetOptions;
             ['ErrorState', 'SuccessState']
                 .filter(function (suffix) { return hasOwn(globalDefaults_1, 'disable' + suffix); })
                 .forEach(function (suffix) {
