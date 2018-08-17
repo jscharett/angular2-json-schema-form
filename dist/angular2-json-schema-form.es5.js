@@ -6802,8 +6802,8 @@ var JsonSchemaFormService = (function () {
                 this.updateArray(ctx, value);
             }
             else {
-                ctx.formControl.setValue(value);
                 ctx.formControl.markAsDirty();
+                ctx.formControl.setValue(value);
             }
         }
         ctx.layoutNode.value = value;
@@ -6812,8 +6812,8 @@ var JsonSchemaFormService = (function () {
                 var item = _a[_i];
                 var targetControl = getControl(this.formGroup, item);
                 if (isObject$1(targetControl) && typeof targetControl.setValue === 'function') {
-                    targetControl.setValue(value);
                     targetControl.markAsDirty();
+                    targetControl.setValue(value);
                 }
             }
         }
@@ -6824,13 +6824,13 @@ var JsonSchemaFormService = (function () {
             formArray.removeAt(0);
         }
         var refPointer = removeRecursiveReferences(ctx.layoutNode.dataPointer + '/-', this.dataRecursiveRefMap, this.arrayMap);
+        formArray.markAsDirty();
         for (var _i = 0, items_1 = items; _i < items_1.length; _i++) {
             var item = items_1[_i];
             var newFormControl = buildFormGroup(this.templateRefLibrary[refPointer]);
             newFormControl.setValue(item);
             formArray.push(newFormControl);
         }
-        formArray.markAsDirty();
     };
     JsonSchemaFormService.prototype.getFormControl = function (ctx) {
         if (!ctx.layoutNode || !isDefined(ctx.layoutNode.dataPointer) ||

@@ -6456,8 +6456,8 @@ class JsonSchemaFormService {
                 this.updateArray(ctx, value);
             }
             else {
-                ctx.formControl.setValue(value);
                 ctx.formControl.markAsDirty();
+                ctx.formControl.setValue(value);
             }
         }
         ctx.layoutNode.value = value;
@@ -6465,8 +6465,8 @@ class JsonSchemaFormService {
             for (const item of ctx.options.copyValueTo) {
                 const targetControl = getControl(this.formGroup, item);
                 if (isObject$1(targetControl) && typeof targetControl.setValue === 'function') {
-                    targetControl.setValue(value);
                     targetControl.markAsDirty();
+                    targetControl.setValue(value);
                 }
             }
         }
@@ -6477,12 +6477,12 @@ class JsonSchemaFormService {
             formArray.removeAt(0);
         }
         const refPointer = removeRecursiveReferences(ctx.layoutNode.dataPointer + '/-', this.dataRecursiveRefMap, this.arrayMap);
+        formArray.markAsDirty();
         for (const item of items) {
             const newFormControl = buildFormGroup(this.templateRefLibrary[refPointer]);
             newFormControl.setValue(item);
             formArray.push(newFormControl);
         }
-        formArray.markAsDirty();
     }
     getFormControl(ctx) {
         if (!ctx.layoutNode || !isDefined(ctx.layoutNode.dataPointer) ||
