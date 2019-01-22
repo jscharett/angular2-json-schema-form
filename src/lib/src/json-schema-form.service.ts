@@ -499,8 +499,8 @@ export class JsonSchemaFormService {
     // Set value of current control
     ctx.controlValue = value;
     if (ctx.boundControl) {
-      ctx.formControl.setValue(value);
       ctx.formControl.markAsDirty();
+      ctx.formControl.setValue(value);
     }
     ctx.layoutNode.value = value;
 
@@ -509,8 +509,8 @@ export class JsonSchemaFormService {
       for (const item of ctx.options.copyValueTo) {
         const targetControl = getControl(this.formGroup, item);
         if (isObject(targetControl) && typeof targetControl.setValue === 'function') {
-          targetControl.setValue(value);
           targetControl.markAsDirty();
+          targetControl.setValue(value);
         }
       }
     }
@@ -526,6 +526,7 @@ export class JsonSchemaFormService {
     const refPointer = removeRecursiveReferences(
       ctx.layoutNode.dataPointer + '/-', this.dataRecursiveRefMap, this.arrayMap
     );
+    formArray.markAsDirty();
     for (const checkboxItem of checkboxList) {
       if (checkboxItem.checked) {
         const newFormControl = buildFormGroup(this.templateRefLibrary[refPointer]);
@@ -533,7 +534,6 @@ export class JsonSchemaFormService {
         formArray.push(newFormControl);
       }
     }
-    formArray.markAsDirty();
   }
 
   getFormControl(ctx: any): AbstractControl {
